@@ -42,7 +42,7 @@ function App() {
                 {status === "loading" && <Loader />}
                 {status === "error" && <Error />}
                 {status === "ready" && (
-                    <StartScreen questionsNumber={questionsNumber} handleBtn={handleBtn} />
+                    <StartScreen questionsNumber={questionsNumber} dispatch={dispatch} />
                 )}
                 {status === "active" && <Question />}
             </Main1>
