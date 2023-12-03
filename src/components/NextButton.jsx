@@ -1,7 +1,17 @@
-import React from 'react'
+import React from "react";
 
-export default function ({dispatch}) {
-  return (
-    <button className='btn btn-ui' onClick={()=>dispatch({type:'nextQuestion'})}>Next</button>
-  )
+export default function ({ dispatch, index, numQuestions, answer }) {
+    // if (answer !== null) return;
+    if (index < numQuestions - 1)
+        return (
+            <button className="btn btn-ui" onClick={() => dispatch({ type: "nextQuestion" })}>
+                Next
+            </button>
+        );
+    if (index === numQuestions - 1)
+        return (
+            <button className="btn btn-ui" onClick={() => dispatch({ type: "finish" })}>
+                finish
+            </button>
+        );
 }

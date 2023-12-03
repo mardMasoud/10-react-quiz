@@ -18,6 +18,8 @@ const initialState = {
 };
 function reducer(state, action) {
     switch (action.type) {
+        case "reStart":
+            return { ...state,index:0, answer: null,points: 0, status: "ready" };
         case "dataRecived":
             return { ...state, questions: action.payload, status: "ready" };
         case "dataFailed":
@@ -34,27 +36,29 @@ function reducer(state, action) {
                     action.payload === question.correctOption
                         ? state.points + question.points
                         : state.points,
-
             };
         case "nextQuestion":
-            if (state.index===state.questions.length)
-            return {
-                ...state,
-                status:"finished"
-            }; 
             return {
                 ...state,
                 index: state.index + 1,
-                answer:null
+                answer: null,
+            };
+        case "finish":
+            return {
+                ...state,
+                status: "finished",
             };
         default:
             throw new Error("Action unkonwn");
     }
 }
 function App() {
-    const [{ questions, status, index, answer,points }, dispatch] = useReducer(reducer, initialState);
+    const [{ questions, status, index, answer, points }, dispatch] = useReducer(
+        reducer,
+        initialState
+    );
     const questionsNumber = questions.length;
-    const maxPoints= questions.reduce((prev,curr)=>prev+curr.points,0)
+    const maxPoints = questions.reduce((prev, curr) => prev + curr.points, 0);
 
     useEffect(function () {
         fetch("http://localhost:8000/questions")
@@ -74,12 +78,20 @@ function App() {
                 )}
                 {status === "active" && (
                     <>
-                    <Progress answer={answer} index={index} numQuestions={questionsNumber} points={points} maxPoints={maxPoints}/>
+                        <Progress
+                            answer={answer}
+                            index={index}
+                            numQuestions={questionsNumber}
+                            points={points}
+                            maxPoints={maxPoints}
+                        />
                         <Question question={questions[index]} dispatch={dispatch} answer={answer} />
-                        {answer !== null && <NextButton dispatch={dispatch} />}
+                        {answer !== null && (
+                            <NextButton dispatch={dispatch} numQuestions={questionsNumber} index={index} answer={answer} />
+                        )}
                     </>
                 )}
-                {status ==='finished' && <FinishScreen maxPoint={maxPoints} points={points}/>}
+                {status === "finished" && <FinishScreen maxPoint={maxPoints} points={points} dispatch={dispatch} />}
             </Main1>
         </div>
     );
